@@ -35,11 +35,12 @@ function App() {
 
   return (
    <>
-   {
+   {/* {
     users.map((user)=>{
       return <Card name={user.name}/>
     })
-   }
+   } */}
+   <h1>Hello World</h1>
    </>
   )
 }
