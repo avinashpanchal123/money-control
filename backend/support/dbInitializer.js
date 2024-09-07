@@ -2,33 +2,31 @@ const sequelize = require('sequelize');
 const async = require('async');
 const DataTypes = sequelize.DataTypes;
 
-function mapSequelizeToSQL(dataType) {
-    switch (dataType.constructor.key) {
-        case DataTypes.STRING:
-            return `VARCHAR(${dataType._length || 255})`;
-        case DataTypes.INTEGER:
-            return `INT${dataType._length ? `(${dataType._length})` : ''}`;
-        case DataTypes.FLOAT:
-            return `FLOAT${dataType._length ? `(${dataType._length.join(', ')})` : ''}`;
-        case DataTypes.DOUBLE:
-            return `DOUBLE${dataType._length ? `(${dataType._length.join(', ')})` : ''}`;
-        case DataTypes.BOOLEAN:
+function mapSequelizeToSQL(dataType, options) {
+    switch (dataType) {
+        case 'STRING':
+            return !!options ? `VARCHAR(${options.length || 255})` : 'VARCHAR(255)';
+        case 'INTEGER':
+            return `INT${options.length ? `(${options.length})` : ''}`;
+        case 'BIGINT':
+            return 'BIGINT';    
+        // case 'FLOAT':
+        //     return `FLOAT${options.length ? `(${options.length.join(', ')})` : ''}`;
+        // case 'DOUBLE':
+        //     return `DOUBLE${dataType._length ? `(${dataType._length.join(', ')})` : ''}`;
+        case 'DECIMAL':
+            return `DECIMAL(${options.precision}, ${options.scale})`;
+        case 'TEXT':
+            return `TEXT`;    
+        case 'BOOLEAN':
             return 'TINYINT(1)';
-        case DataTypes.DATE:
+        case 'DATE':
             return 'DATETIME';
-        case DataTypes.TEXT:
-            return 'TEXT';
-        case DataTypes.BLOB:
-            return 'BLOB';
-        case DataTypes.DECIMAL:
-            return `DECIMAL${dataType._length ? `(${dataType._length.join(', ')})` : ''}`;
-        case DataTypes.UUID:
-            return 'CHAR(36)';
-        case DataTypes.ENUM:
-            return `ENUM(${dataType.values.map(value => `'${value}'`).join(', ')})`;
-        case DataTypes.DATEONLY:
+        case 'ENUM':
+            return `ENUM(${options.values.map(value => `'${value}'`).join(', ')})`;
+        case 'DATEONLY':
             return 'DATE';
-        case DataTypes.TIME:
+        case 'TIME':
             return 'TIME';
         default:
             return dataType.key; // Fallback for any types not explicitly handled
@@ -36,22 +34,30 @@ function mapSequelizeToSQL(dataType) {
 }
 
 function generateCreateTableSQL(tableName, schema) {
-    let sql = `CREATE TABLE IF NOT EXISTS \`${tableName}\` (`;
+    let sql = `CREATE TABLE IF NOT EXISTS \`${tableName}\` (\n`;
     const columns = [];
 
     for (const [key, attributes] of Object.entries(schema.tableAttributes)) {
-        let column = `\`${key}\` ${(attributes.type)}`;
-
+        console.log(typeof attributes.type.key)
+        let column = `\`${key}\` ${(mapSequelizeToSQL(attributes.type.key, attributes.type.options))}`;
+        if (attributes.allowNull === false) column += ' NOT NULL';
         if (attributes.primaryKey) column += ' PRIMARY KEY';
         if (attributes.autoIncrement) column += ' AUTO_INCREMENT';
-        if (attributes.allowNull === false) column += ' NOT NULL';
         if (attributes.unique) column += ' UNIQUE';
 
         columns.push(column);
     }
 
-    sql += columns.join(', ');
-    sql += ');';
+    for (const [fieldName, fieldOptions] of Object.entries(schema.tableAttributes)) {
+        if (fieldOptions.references) {
+          const { model, key } = fieldOptions.references;
+          const refTableName = model.getTableName ? model.getTableName() : model; // Handle both Sequelize model instances and plain table names
+          columns.push(`  FOREIGN KEY (${"`"+fieldName+"`"}) REFERENCES ${"`"+refTableName+"`"}(${"`"+key+"`"})`);
+        }
+      }
+
+    sql += columns.join(',\n');
+    sql += '\n);';
     return sql;
 }
 
@@ -76,7 +82,7 @@ function syncSchema(dbConnector, dbName, tableName, modelsList, callback) {
                     let query1 = generateCreateTableSQL(tableName, modelsList[tableName]);
                     dbConnector.query(query1, {
                         replacements: { dbName, tableName },
-                       // type: sequelize.QueryTypes.CREATE
+                        // type: sequelize.QueryTypes.CREATE
                     }).then((res) => {
                         process.nextTick(callback, null)
                     }).catch((err) => {
@@ -84,7 +90,7 @@ function syncSchema(dbConnector, dbName, tableName, modelsList, callback) {
                     })
                 }
             }
-            else{
+            else {
                 process.nextTick(callback, new Error("something went wrong"))
             }
         }).catch((err) => {
