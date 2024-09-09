@@ -1,4 +1,6 @@
 import Card from "./Card.jsx";
+import Navbar from "./components/Header/Navbar.jsx";
+import Apexcharts from './components/Analysis/Analysis.jsx'
 import './index.css'
 
 function App() {
@@ -35,12 +37,8 @@ function App() {
 
   return (
    <>
-   {/* {
-    users.map((user)=>{
-      return <Card name={user.name}/>
-    })
-   } */}
-   <h1>Hello World</h1>
+   {/* <Navbar/> */}
+   <Apexcharts/>
    </>
   )
 }
