@@ -1,46 +1,18 @@
-import Card from "./Card.jsx";
-import Navbar from "./components/Header/Navbar.jsx";
-import Apexcharts from './components/Analysis/Analysis.jsx'
-import './index.css'
+import { useState } from "react";
+
+import { Outlet } from "react-router-dom";
+import Header from "./components/Navbar/Navbar";
+import Footer from "./components/Footer/Footer";
+
 
 function App() {
-
-  const users = [
-    {
-      name : 'Alexa',
-      age : 22,
-      gmail :'Alexa@gmail.com',
-      
-    },
-    {
-      name : 'Delba',
-      age : 28,
-      gmail :'Delba@gmail.com'
-    },
-    {
-      name : 'Alia',
-      age : 25,
-      gmail :'Alia@gmail.com'
-    },
-    {
-      name : 'Sana',
-      age : 30,
-      gmail :'Sana@gmail.com'
-    },
-    {
-      name : 'Maria',
-      age : 18,
-      gmail :'Maria@gmail.com'
-    }
-  ]
-
-
   return (
-   <>
-   {/* <Navbar/> */}
-   <Apexcharts/>
-   </>
-  )
+    <>
+      <Header />
+      <Outlet />
+      <Footer/>
+    </>
+  );
 }
 
-export default App
+export default App;
