@@ -23,6 +23,9 @@ async.series([(callback)=>{
     }, (err)=>{
         process.nextTick(callback, null);
     })
+}, (callback)=>{
+    require('./app');
+    process.nextTick(callback, null);
 }], (err)=>{
     console.log(err);
 })

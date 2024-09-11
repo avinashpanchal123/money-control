@@ -19,8 +19,6 @@ fields['category_id'] = {type: DataTypes.BIGINT,  allowNull: false, references: 
     model : Category,
     key : 'id'
 }};
-fields['created_on'] = {type: DataTypes.DATE(6), allowNull: true, defaultValue: DataTypes.CURRENT_TIMESTAMP};
-fields['modified_on'] = {type: DataTypes.DATE(6), allowNull: true};
 
 const indexes = [
     {fields: ['account_id']},

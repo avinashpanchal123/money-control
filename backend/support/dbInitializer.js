@@ -9,7 +9,7 @@ function mapSequelizeToSQL(dataType, options) {
         case 'INTEGER':
             return `INT${options.length ? `(${options.length})` : ''}`;
         case 'BIGINT':
-            return 'BIGINT';    
+            return 'BIGINT';
         // case 'FLOAT':
         //     return `FLOAT${options.length ? `(${options.length.join(', ')})` : ''}`;
         // case 'DOUBLE':
@@ -17,7 +17,7 @@ function mapSequelizeToSQL(dataType, options) {
         case 'DECIMAL':
             return `DECIMAL(${options.precision}, ${options.scale})`;
         case 'TEXT':
-            return `TEXT`;    
+            return `TEXT`;
         case 'BOOLEAN':
             return 'TINYINT(1)';
         case 'DATE':
@@ -39,22 +39,26 @@ function generateCreateTableSQL(tableName, schema) {
 
     for (const [key, attributes] of Object.entries(schema.tableAttributes)) {
         console.log(typeof attributes.type.key)
-        let column = `\`${key}\` ${(mapSequelizeToSQL(attributes.type.key, attributes.type.options))}`;
-        if (attributes.allowNull === false) column += ' NOT NULL';
-        if (attributes.primaryKey) column += ' PRIMARY KEY';
-        if (attributes.autoIncrement) column += ' AUTO_INCREMENT';
-        if (attributes.unique) column += ' UNIQUE';
-
-        columns.push(column);
+       
+            let column = `\`${key}\` ${(mapSequelizeToSQL(attributes.type.key, attributes.type.options))}`;
+            (key =='createdAt'  || key == 'updatedAt') ? " NUll" : (attributes.allowNull === false) ? column += ' NOT NULL': " ";
+            if (attributes.primaryKey) column += ' PRIMARY KEY';
+            if (attributes.autoIncrement) column += ' AUTO_INCREMENT';
+            if (attributes.unique) column += ' UNIQUE';
+            // if (){
+                
+            // }
+            columns.push(column);
+        
     }
 
     for (const [fieldName, fieldOptions] of Object.entries(schema.tableAttributes)) {
         if (fieldOptions.references) {
-          const { model, key } = fieldOptions.references;
-          const refTableName = model.getTableName ? model.getTableName() : model; // Handle both Sequelize model instances and plain table names
-          columns.push(`  FOREIGN KEY (${"`"+fieldName+"`"}) REFERENCES ${"`"+refTableName+"`"}(${"`"+key+"`"})`);
+            const { model, key } = fieldOptions.references;
+            const refTableName = model.getTableName ? model.getTableName() : model; // Handle both Sequelize model instances and plain table names
+            columns.push(`  FOREIGN KEY (${"`" + fieldName + "`"}) REFERENCES ${"`" + refTableName + "`"}(${"`" + key + "`"})`);
         }
-      }
+    }
 
     sql += columns.join(',\n');
     sql += '\n);';
