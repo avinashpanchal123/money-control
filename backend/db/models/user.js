@@ -7,7 +7,7 @@ fields['id'] = {type : DataTypes.BIGINT, allowNull : false, primaryKey: true, au
 fields['username'] = {type : DataTypes.STRING(100), allowNull: false};
 fields['email'] = {type: DataTypes.STRING(100), allowNull: false};
 fields['mobile_number'] = {type: DataTypes.BIGINT, allowNull: true};
-fields['password_hash'] = {type: DataTypes.STRING(100), allowNull: false};
+fields['password'] = {type: DataTypes.STRING(100), allowNull: false};
 
 const indexes = [
     { fields: ['username'] },
