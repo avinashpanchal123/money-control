@@ -1,24 +1,29 @@
 import { useEffect, useState } from "react";
 import Modal from "../Modal/Modal";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { useDispatch, useSelector } from 'react-redux';
+import { editCategory, addCategory } from "../../features/category/categorySlice";
 
 
 const Category = () => {
+    const categories = useSelector(state => state.category.value);
+    const dispatch = useDispatch();
+
     const [categoryType, setcategoryType] = useState({
         income: false,
         expense: false
     });
     const [categoryName, setCategoryName] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [categories, setCategories] = useState([]);
+    // const [categories, setCategories] = useState([]);
     const [editID, setEditID] = useState(null)
- 
+
     useEffect(() => {
         console.log(categories);
     }, [categories])
 
 
-    const addCategory = () => {
+    const addNewCategory = () => {
 
         if (categoryName && (categoryType.income || categoryType.expense)) {
             const newCategory = {
@@ -27,17 +32,17 @@ const Category = () => {
                 type: categoryType.income ? "income" : "expense",
             };
 
-            setCategories((prevCategories) => [...prevCategories, newCategory]);
+            dispatch(addCategory(newCategory));
         }
-        
+
     };
 
-    const handleSave = (e)=>{
+    const handleSave = (e) => {
         e.preventDefault()
-        if(!!editID)
+        if (!!editID)
             saveEdited(editID)
         else
-          addCategory()
+            addNewCategory()
         clearValues();
     }
 
@@ -68,8 +73,8 @@ const Category = () => {
     }
 
     const handleEdit = (id) => {
-       setEditID(id)
-        let currCategory = categories.find((category)=> id === category.id);
+        setEditID(id)
+        let currCategory = categories.find((category) => id === category.id);
         setCategoryName(currCategory.name);
         setcategoryType({
             income: currCategory.type == "income" ? true : false,
@@ -78,14 +83,14 @@ const Category = () => {
         setShowModal(true);
     };
 
-    const saveEdited = (id)=>{
-        const modifiedCategory = {
-            id: Date.now(),
+    const saveEdited = (id) => {
+        let category = {
+            id: id,
             name: categoryName,
             type: categoryType.income ? "income" : "expense",
         };
-        let modifiedCategoryList = categories.map((category)=> id === category.id ? modifiedCategory: category);
-        setCategories(modifiedCategoryList);
+        // let modifiedCategoryList = categories.map((category)=> id === category.id ? modifiedCategory: category);
+        dispatch(editCategory(category));
     }
 
     const handleDelete = (id) => {
@@ -151,12 +156,10 @@ const Category = () => {
                 handleType={handleType}
                 type={categoryType}
                 value={categoryName}
-                editID = {editID}
+                editID={editID}
             />
 
         }
-
-
 
     </>
 }
