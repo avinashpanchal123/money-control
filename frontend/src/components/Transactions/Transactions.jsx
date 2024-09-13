@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Modal from "../Modal/Modal";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
-import { addTransaction, editTransaction } from "../../features/transaction/transactionSlice";
+import { addTransaction, editTransaction, deleteTransaction } from "../../features/transaction/transactionSlice";
 
 
 
@@ -94,6 +94,10 @@ const Transactions = () => {
       expense: false
     })
     setShowModal(false)
+  }
+
+  const handleDelete = (id)=>{
+     dispatch(deleteTransaction(id))
   }
 
   return <>

@@ -15,12 +15,16 @@ const TransactionSlice = createSlice({
             state.value = state.value.map((transaction) => 
                  transaction.id == payload.id ? payload : transaction
             )
+        },
+        deleteTransaction : (state, action)=>{
+            let id = action.payload;
+            state.value = state.value.filter((transaction)=> transaction.id != id)
         }
     }
 });
 
 
 // Action creators are generated for each case reducer function
-export const { addTransaction, editTransaction } = TransactionSlice.actions;
+export const { addTransaction, editTransaction, deleteTransaction } = TransactionSlice.actions;
 
 export default TransactionSlice.reducer;

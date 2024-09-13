@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Modal from "../Modal/Modal";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
-import { editCategory, addCategory } from "../../features/category/categorySlice";
+import { editCategory, addCategory, deleteCategory } from "../../features/category/categorySlice";
 
 
 const Category = () => {
@@ -94,8 +94,8 @@ const Category = () => {
     }
 
     const handleDelete = (id) => {
-        const updatedCategories = categories.filter((category) => category.id !== id);
-        setCategories(updatedCategories);
+        // let category = categories.find((category)=> category.id == id);
+        dispatch(deleteCategory(id))
     };
 
     return <>
