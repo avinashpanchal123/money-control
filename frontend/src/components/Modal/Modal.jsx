@@ -1,42 +1,87 @@
-
-
-const Modal = ({headingText, setValue, addValue, clearValues, handleType, type, value}) => {
-    return<>
-    <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-
-                <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                    <div className='flex items-center md:container md:mx-auto'>
-                        <form action="">
-                            <h1 className="m-4 text-xl font-bold">Add New {headingText}</h1>
-                            <input onChange={handleType} checked={type.income} type="checkbox" name="income" id="income" />
-                            <label htmlFor="income">Income</label>
-                            <input onChange={handleType} checked={type.expense} type="checkbox" name="expense" id="expense" />
-                            <label htmlFor="expense">Expense</label>
-                            <div>
-                                <input value={value} onChange={(e) => setValue(e.target.value)} type="text" placeholder="category name" />
-                            </div>
-
-                            <div className="flex-auto flex space-x-4 mt-8">
-                                <button onClick={clearValues}
-                                    className="h-10 px-6 font-semibold rounded-md border border-slate-200 text-slate-900" type="button">
-                                    Cancel
-                                </button>
-                                <button onClick={addValue}
-                                    className="h-10 px-6 font-semibold rounded-md bg-black text-white" type="submit">
-                                    Save
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+const Modal = ({ showModal, headingText, setValue, handleSave, clearValues, handleType, type, value , editID}) => {
+    return (
+      <>
+        {showModal && (
+          <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            {/* Background overlay */}
+            <div className="fixed inset-0 bg-gray-700 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+  
+            {/* Modal Container */}
+            <div className="fixed inset-0 z-10 overflow-y-auto">
+              <div className="flex min-h-full items-center justify-center p-4 sm:p-0">
+  
+                {/* Modal Box */}
+                <div className="relative bg-white rounded-lg shadow-xl transform transition-all sm:max-w-lg w-full">
+                  {/* Modal Content */}
+                  <div className="p-6">
+                    {/* Modal Heading */}
+                    <h1 className="text-xl font-bold text-gray-800 mb-4">Add New {headingText}</h1>
+  
+                    {/* Form */}
+                    <form onSubmit={handleSave}>
+                      {/* Checkbox for Income/Expense */}
+                      <div className="flex items-center space-x-4 mb-4">
+                        <div className="flex items-center">
+                          <input
+                            onChange={handleType}
+                            checked={type.income}
+                            type="checkbox"
+                            name="income"
+                            id="income"
+                            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <label htmlFor="income" className="ml-2 text-gray-700">Income</label>
+                        </div>
+                        <div className="flex items-center">
+                          <input
+                            onChange={handleType}
+                            checked={type.expense}
+                            type="checkbox"
+                            name="expense"
+                            id="expense"
+                            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <label htmlFor="expense" className="ml-2 text-gray-700">Expense</label>
+                        </div>
+                      </div>
+  
+                      {/* Input for Category Name */}
+                      <div className="mb-6">
+                        <input
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                          type="text"
+                          placeholder="Category name"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                      </div>
+  
+                      {/* Buttons */}
+                      <div className="flex justify-end space-x-4">
+                        <button
+                          onClick={clearValues}
+                          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:ring-2 focus:ring-gray-500"
+                          type="button"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
+                          type="submit"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
+              </div>
             </div>
-        </div>
-    </div>
-    </>
-}
-
-export default Modal;
+          </div>
+        )}
+      </>
+    );
+  };
+  
+  export default Modal;
+  
