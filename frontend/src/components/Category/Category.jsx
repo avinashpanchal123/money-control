@@ -2,37 +2,61 @@ import { useEffect, useState } from "react";
 import Modal from "../Modal/Modal";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
-import { editCategory, addCategory, deleteCategory } from "../../features/category/categorySlice";
+import {useLocation, useNavigate} from 'react-router-dom';
+import axios from 'axios';
+import { editCategory, addCategory, deleteCategory, setCategories } from "../../features/category/categorySlice";
 
 
 const Category = () => {
     const categories = useSelector(state => state.category.value);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const isAddModal = location.pathname === '/category/add';
+    const isEditModal = !!location.pathname.includes('/category/edit');
 
     const [categoryType, setcategoryType] = useState({
         income: false,
         expense: false
     });
     const [categoryName, setCategoryName] = useState('');
-    const [showModal, setShowModal] = useState(false);
     // const [categories, setCategories] = useState([]);
     const [editID, setEditID] = useState(null)
 
     useEffect(() => {
-        console.log(categories);
-    }, [categories])
+        let response = axios.get('http://localhost:3000/category');
+        response.then((params)=>{
+            let data = params.data.map((el)=> {
+                let obj = {
+                    id: el.id,
+                    name : el.category_name,
+                    type: el.category_type
+                }
+                return obj;
+            });
+            console.log(data);
+            
+             dispatch(setCategories(data))
+        }).catch((err)=>{
+            console.error('Error fetching categories:', err)
+        })
+
+    }, [])
 
 
-    const addNewCategory = () => {
+    const addNewCategory = async() => {
 
         if (categoryName && (categoryType.income || categoryType.expense)) {
             const newCategory = {
-                id: Date.now(),
                 name: categoryName,
                 type: categoryType.income ? "income" : "expense",
             };
 
-            dispatch(addCategory(newCategory));
+            let response = axios.post('http://localhost:3000/category/add', newCategory);
+            let params = await response;
+            let data = params.data;
+           
+            dispatch(addCategory(data));
         }
 
     };
@@ -43,6 +67,7 @@ const Category = () => {
             saveEdited(editID)
         else
             addNewCategory()
+        navigate('/category')
         clearValues();
     }
 
@@ -69,7 +94,7 @@ const Category = () => {
             income: false,
             expense: false
         })
-        setShowModal(false)
+        navigate('/category')
     }
 
     const handleEdit = (id) => {
@@ -80,21 +105,29 @@ const Category = () => {
             income: currCategory.type == "income" ? true : false,
             expense: currCategory.type == "expense" ? true : false
         })
-        setShowModal(true);
+        navigate(`category/edit/${id}`)
     };
 
-    const saveEdited = (id) => {
+    const saveEdited = async (id) => {
         let category = {
             id: id,
             name: categoryName,
             type: categoryType.income ? "income" : "expense",
         };
+        const response = await axios.post(`http://localhost:3000/category/edit/`, category);
+        let params = await response;
+        let data = params.data;
+        console.log(data);
+        
+        dispatch(editCategory(data));
+        
         // let modifiedCategoryList = categories.map((category)=> id === category.id ? modifiedCategory: category);
-        dispatch(editCategory(category));
+        // dispatch(editCategory(category));
     }
 
-    const handleDelete = (id) => {
+    const handleDelete = async(id) => {
         // let category = categories.find((category)=> category.id == id);
+        await axios.post('http://localhost:3000/category/delete', {id})
         dispatch(deleteCategory(id))
     };
 
@@ -137,7 +170,9 @@ const Category = () => {
                 {/* Add New Category Button at the Bottom */}
                 <div className="text-center mt-6">
                     <button
-                        onClick={() => setShowModal(true)}
+                        onClick={() => {
+                            navigate('/category/add')
+                        }}
                         className="bg-blue-500 text-white px-4 py-2 rounded-md w-full"
                     >
                         + Add New Category
@@ -146,10 +181,10 @@ const Category = () => {
             </div>
         </div>
         {
-            showModal &&
+            (isAddModal || isEditModal) &&
             <Modal
-                showModal={showModal}
-                headingText="Category"
+                showModal={(isAddModal || isEditModal)}
+                headingText={`${!!isAddModal ? "Add New Category" : "Edit Category"}`}
                 setValue={setCategoryName}
                 handleSave={handleSave}
                 clearValues={clearValues}

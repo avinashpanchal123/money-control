@@ -5,6 +5,7 @@ const express = require('express');
 const app = express();
 // const server = createServer(app)
 const authRoutes = require('./routes/authRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
 const cors = require("cors")
 
 // const io = new Server(server, {
@@ -25,9 +26,11 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 //app.use('/users', userRoutes); // Example user route
 
-app.get('/', (req, res) => {
-  res.send("Hello World!");
-});
+app.use('/category', categoryRoutes);
+
+// app.get('/', (req, res) => {
+//   res.send("Hello World!");
+// });
 
 
 // io.on('connection',(socket)=>{

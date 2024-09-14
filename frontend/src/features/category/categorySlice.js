@@ -16,6 +16,9 @@ const categorySlice = createSlice({
                 category.id == payload.id ? payload : category
             )
         },
+        setCategories : (state, action)=>{
+            state.value = action.payload
+        },
         deleteCategory : (state, action)=>{
             let id = action.payload;
             state.value = state.value.filter((category)=> category.id != id)
@@ -25,6 +28,6 @@ const categorySlice = createSlice({
 
 
 // Action creators are generated for each case reducer function
-export const { addCategory, editCategory, deleteCategory } = categorySlice.actions;
+export const { addCategory, editCategory, deleteCategory, setCategories } = categorySlice.actions;
 
 export default categorySlice.reducer;
