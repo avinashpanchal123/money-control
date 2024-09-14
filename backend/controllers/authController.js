@@ -42,15 +42,21 @@ exports.register = async (req, res) => {
   if (userExists) return res.send("User already exists");
 
   const hashedPassword = await bcrypt.hash(password, saltRounds);
-  const newUser = await User.create({
-    username,
-    password: hashedPassword,
-    email,
-    mobile_number: 1234567890
-  });
+  try {
+    const newUser = await User.create({
+      username,
+      password: hashedPassword,
+      email,
+      mobile_number: 1234567890
+    });
+    res.json({ "msg": "Sigup Successful" });      
+  } catch (error) {
+    res.json({"msg" :"Something Went Wrong Try Again"})
+  }
 
-  const accessToken = jwt.sign({ username: newUser.username, email: newUser.email }, privateKey, { expiresIn: '15m' });
-  res.json({ accessToken });
+  // const accessToken = jwt.sign({ username: newUser.username, email: newUser.email }, privateKey, { expiresIn: '15m' });
+  // res.json({ accessToken });
+  
 };
 
 // Protected Route
