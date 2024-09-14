@@ -4,8 +4,9 @@ import App from "./App.jsx";
 import Analysis from "./components/Analysis/Analysis.jsx";
 import Budget from "./components/Budget/Budget.jsx";
 import Category from "./components/Category/Category.jsx";
-// import Transactions from "./components/Transations/Transactions.jsx";
-import Transactions from "./components/Transactions/Transactions.jsx";
+import Transactions from "./components/Transations/Transactions.jsx";
+import Signup from "./components/loginSignup/Signup.jsx"
+import Login from "./components/loginSignup/Login.jsx"
 import "./index.css";
 import store from "./app/store.js";
 import { Provider } from 'react-redux'
@@ -26,6 +27,8 @@ const router = createBrowserRouter(
       <Route path="budget" element={<Budget />} />
       <Route path="category" element={<Category />} />
       <Route path="transactions" element={<Transactions />} />
+      <Route path="signup" element={<Signup/>} />
+      <Route path="login" element={<Login/>} />
     </Route>
   )
 );
