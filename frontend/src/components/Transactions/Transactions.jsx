@@ -2,39 +2,91 @@ import { useState, useEffect } from "react";
 import Modal from "../Modal/Modal";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
-import { addTransaction, editTransaction, deleteTransaction } from "../../features/transaction/transactionSlice";
-
-
+import axios from "axios";
+import { setTransactions, addTransaction, editTransaction, deleteTransaction } from "../../features/transaction/transactionSlice";
+import TransactionTable from './TransactionTable'
+import { editCategory, addCategory, deleteCategory, setCategories } from "../../features/category/categorySlice";
+import TransactionFilter from './TransactionFilter'
 
 const Transactions = () => {
   const dispatch = useDispatch()
   const [showModal, setShowModal] = useState(false);
-  const transactions = useSelector(state => state.transaction.value)
+  const transactions = useSelector(state => state.transaction.value);
+  const categories = useSelector(state => state.category.value);
+  const [categoryID, setCategoryID] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('')
 
   const [transactionType, setTransactionType] = useState({
     income: false,
     expense: false
   });
   const [transactionAmount, setTransactionAmount] = useState(0);
-  const [transaction, setTransaction] = useState({});
   const [editID, setEditID] = useState(null);
 
   useEffect(() => {
-    console.log(transactions);
-  }, [transactions])
+    const fetchCategories = async () => {
+      let response = axios.get('http://localhost:3000/category');
+      response.then((params) => {
+        let data = params.data.map((el) => {
+          let obj = {
+            id: el.id,
+            name: el.category_name,
+            type: el.category_type
+          }
+          return obj;
+        });
+        console.log(data);
 
+        dispatch(setCategories(data))
+      }).catch((err) => {
+        console.error('Error fetching categories:', err)
+      })
+    }
 
-  const addNewTransaction = () => {
-
-    if (!!transactionAmount && (transactionType.income || transactionType.expense)) {
-      let newTransaction = {
-        id: Date.now(),
-        amount: transactionAmount,
-        type: transactionType.income ? "income" : "expense",
+    const fetchTransactions = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/transactions');
+        const data = response.data.data;
+        console.log(data);
+        
+        dispatch(setTransactions(data))
+      } catch (err) {
+        console.log(err);
       }
-      console.log(newTransaction);
 
-      dispatch(addTransaction(newTransaction))
+    }
+
+    const fetchAllData = async () => {
+      try {
+        await Promise.all([fetchCategories(), fetchTransactions()])
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchAllData()
+  }, [])
+
+
+  const addNewTransaction = async () => {
+    try {
+      if (!!transactionAmount && (transactionType.income || transactionType.expense)) {
+        let newTransaction = {
+          // id: Date.now(),
+          amount: transactionAmount,
+          category_id : categoryID,
+          type: transactionType.income ? "income" : "expense",
+        
+        }
+        let response = await axios.post('http://localhost:3000/transactions/add', newTransaction);
+        let data = response.data.data;
+        console.log(data);
+        
+        dispatch(addTransaction(response.data.data))
+        //dispatch(addTransaction(newTransaction))
+      }
+    } catch (err) {
+      console.log(err);
+
     }
   };
 
@@ -96,54 +148,48 @@ const Transactions = () => {
     setShowModal(false)
   }
 
-  const handleDelete = (id)=>{
-     dispatch(deleteTransaction(id))
+  const handleDelete = (id) => {
+    dispatch(deleteTransaction(id))
+  }
+
+  const onFilter = ()=>{
+
   }
 
   return <>
     {/* Outer container with dark grey background */}
     <div className="min-h-screen flex items-center justify-center bg-gray-800">
+      <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6">
+        <button
+          onClick={() => setShowModal(true)}
+          className="bg-blue-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-blue-600 transition duration-300 w-full md:w-auto"
+        >
+          + Add New Transaction
+        </button>
+      </div>
       {/* Inner container with white background */}
-      <div className="bg-white w-96 p-6 rounded-md shadow-lg">
+      <div className="bg-white w-full md:w-8/12 p-6 rounded-md shadow-lg">
         {/* Transaction List */}
         <div className="mb-4">
           <h1 className="text-xl font-bold text-center mb-4">Transactions</h1>
+          <div className="w-2/4 mt-10">
+          <TransactionFilter
+          categories = {categories}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          onFilter={onFilter}
+          />
+          </div>
           <ul>
             {transactions.length > 0 ? (
-              transactions.map((transaction) => (
-                <li
-                  key={transaction.id}
-                  className="flex justify-between items-center bg-gray-100 p-4 mb-2 rounded-md"
-                >
-                  <span className="font-semibold">
-                    {transaction.amount} ({transaction.type})
-                  </span>
-                  <div className="flex space-x-4">
-                    <FaEdit
-                      className="text-blue-500 cursor-pointer"
-                      onClick={() => handleEdit(transaction.id)}
-                    />
-                    <FaTrashAlt
-                      className="text-red-500 cursor-pointer"
-                      onClick={() => handleDelete(transaction.id)}
-                    />
-                  </div>
-                </li>
-              ))
+              <TransactionTable transactions={transactions}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+              />
             ) : (
               <p className="text-center text-gray-500">No Transactions  added yet.</p>
             )}
           </ul>
-        </div>
-
-        {/* Add New Transaction Button at the Bottom */}
-        <div className="text-center mt-6">
-          <button
-            onClick={() => setShowModal(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md w-full"
-          >
-            + Add New Transaction
-          </button>
         </div>
       </div>
     </div>
@@ -202,6 +248,24 @@ const Transactions = () => {
                     </div>
                   </div>
 
+                  <div className="mb-6">
+                    <select
+                      onChange={(e)=>{
+                        console.log(e.target.value);
+                        setCategoryID(e.target.value)
+                      }}
+                      className="w-full p-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option>Select Option...</option>
+                      {categories.map((category, index) => (
+                        <option key={index} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+
                   {/* Input for Transaction Amount */}
                   <div className="mb-6">
                     <input
@@ -210,6 +274,19 @@ const Transactions = () => {
                       type="number"
                       placeholder="Transaction Amount"
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                  </div>
+                  {/* Description for transaction*/}
+                  <div className="mb-6">
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                      Transaction Description
+                    </label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      rows="3"
+                      className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Enter a brief description of the transaction..."
                     />
                   </div>
 

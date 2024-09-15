@@ -11,8 +11,6 @@ fields['user_id'] = {type: DataTypes.BIGINT, allowNull: false, references: {
 }}
 fields['category_name'] = {type: DataTypes.STRING(100), allowNull: false };
 fields['category_type'] = {type : DataTypes.ENUM('income', 'expense'), allowNull: false};
-fields['created_on'] = {type: DataTypes.DATE(6), allowNull: true, defaultValue: DataTypes.CURRENT_TIMESTAMP};
-fields['modified_on'] = {type: DataTypes.DATE(6), allowNull: true};
 
 const indexes = [
     {fields : ['user_id']},

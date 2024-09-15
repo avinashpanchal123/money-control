@@ -38,16 +38,12 @@ function generateCreateTableSQL(tableName, schema) {
     const columns = [];
 
     for (const [key, attributes] of Object.entries(schema.tableAttributes)) {
-        console.log(typeof attributes.type.key)
        
             let column = `\`${key}\` ${(mapSequelizeToSQL(attributes.type.key, attributes.type.options))}`;
             (key =='createdAt'  || key == 'updatedAt') ? " NUll" : (attributes.allowNull === false) ? column += ' NOT NULL': " ";
             if (attributes.primaryKey) column += ' PRIMARY KEY';
             if (attributes.autoIncrement) column += ' AUTO_INCREMENT';
             if (attributes.unique) column += ' UNIQUE';
-            // if (){
-                
-            // }
             columns.push(column);
         
     }
@@ -107,3 +103,6 @@ function syncSchema(dbConnector, dbName, tableName, modelsList, callback) {
 }
 
 module.exports = syncSchema
+
+
+// insert into money_control.user (username, email, mobile_number, password) values ( 'avinash', 'avi@gmail.com', 1234567890, 1234567890);

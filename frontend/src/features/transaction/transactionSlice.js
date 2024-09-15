@@ -10,6 +10,9 @@ const TransactionSlice = createSlice({
             let payload = action.payload;
             state.value.push(payload)
         },
+        setTransactions : (state, action)=>{
+            state.value = action.payload;
+        },
         editTransaction: (state, action) => {
             let payload = action.payload;
             state.value = state.value.map((transaction) => 
@@ -25,6 +28,6 @@ const TransactionSlice = createSlice({
 
 
 // Action creators are generated for each case reducer function
-export const { addTransaction, editTransaction, deleteTransaction } = TransactionSlice.actions;
+export const { addTransaction, editTransaction, deleteTransaction, setTransactions } = TransactionSlice.actions;
 
 export default TransactionSlice.reducer;

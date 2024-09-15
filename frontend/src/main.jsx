@@ -4,7 +4,7 @@ import App from "./App.jsx";
 import Analysis from "./components/Analysis/Analysis.jsx";
 import Budget from "./components/Budget/Budget.jsx";
 import Category from "./components/Category/Category.jsx";
-import Transactions from "./components/Transations/Transactions.jsx";
+import Transactions from "./components/Transactions/Transactions.jsx";
 import Signup from "./components/loginSignup/Signup.jsx"
 import Login from "./components/loginSignup/Login.jsx"
 import "./index.css";
