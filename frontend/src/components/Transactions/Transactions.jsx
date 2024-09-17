@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import Modal from "../Modal/Modal";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,10 +11,11 @@ import TransactionFilter from './TransactionFilter'
 const Transactions = () => {
   const dispatch = useDispatch()
   const [showModal, setShowModal] = useState(false);
+  const [count , setCount] = useState(0)
   const transactions = useSelector(state => state.transaction.value);
   const categories = useSelector(state => state.category.value);
   const [categoryID, setCategoryID] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('')
+  const [filterCategoryID, setFilterCategoryID] = useState('')
 
   const [transactionType, setTransactionType] = useState({
     income: false,
@@ -48,7 +49,7 @@ const Transactions = () => {
         const response = await axios.get('http://localhost:3000/transactions');
         const data = response.data.data;
         console.log(data);
-        
+
         dispatch(setTransactions(data))
       } catch (err) {
         console.log(err);
@@ -71,18 +72,16 @@ const Transactions = () => {
     try {
       if (!!transactionAmount && (transactionType.income || transactionType.expense)) {
         let newTransaction = {
-          // id: Date.now(),
           amount: transactionAmount,
-          category_id : categoryID,
+          category_id: categoryID,
           type: transactionType.income ? "income" : "expense",
-        
+
         }
         let response = await axios.post('http://localhost:3000/transactions/add', newTransaction);
         let data = response.data.data;
         console.log(data);
-        
+
         dispatch(addTransaction(response.data.data))
-        //dispatch(addTransaction(newTransaction))
       }
     } catch (err) {
       console.log(err);
@@ -125,7 +124,7 @@ const Transactions = () => {
     }
   }
 
-  const handleEdit = (id) => {
+  const handleEdit = useCallback((id) => {
 
     setEditID(id)
     let currTransaction = transactions.find((transaction) => id === transaction.id);
@@ -136,7 +135,7 @@ const Transactions = () => {
       expense: currTransaction.type == "expense" ? true : false
     })
     setShowModal(true);
-  };
+  }, [])
 
 
   const clearValues = () => {
@@ -148,12 +147,24 @@ const Transactions = () => {
     setShowModal(false)
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = useCallback(async(id) => {
+    await axios.post('http://localhost:3000/transactions/delete', {id})
     dispatch(deleteTransaction(id))
+  }, [transactions])
+
+  const onFilter = () => {
+
   }
 
-  const onFilter = ()=>{
+  const filteredTransactions = useMemo(() => {
+    
+    if (!!filterCategoryID)
+      return transactions.filter((tran) => tran.category.id == filterCategoryID)
+    return transactions
+  }, [filterCategoryID, transactions])
 
+  const handleClick = ()=>{
+    setCount(count+1)
   }
 
   return <>
@@ -173,16 +184,18 @@ const Transactions = () => {
         <div className="mb-4">
           <h1 className="text-xl font-bold text-center mb-4">Transactions</h1>
           <div className="w-2/4 mt-10">
-          <TransactionFilter
-          categories = {categories}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          onFilter={onFilter}
-          />
+          < button onClick={handleClick}>click me</button>
+          <div>{count}</div>
+            <TransactionFilter
+              categories={categories}
+              filterCategoryID={filterCategoryID}
+              setFilterCategoryID={setFilterCategoryID}
+              onFilter={onFilter}
+            />
           </div>
           <ul>
             {transactions.length > 0 ? (
-              <TransactionTable transactions={transactions}
+              <TransactionTable transactions={filteredTransactions}
                 handleEdit={handleEdit}
                 handleDelete={handleDelete}
               />
@@ -195,16 +208,6 @@ const Transactions = () => {
     </div>
     {
       showModal &&
-      // <Modal
-      //     showModal={showModal}
-      //     headingText="Transaction"
-      //     setValue={setTransactionAmount}
-      //     addValue={addNewTransaction}
-      //     clearValues={clearValues}
-      //     handleType={handleType}
-      //     type={transactionType}
-      //     name={transactionAmount}
-      // />
       <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         {/* Background overlay */}
         <div className="fixed inset-0 bg-gray-700 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
@@ -250,7 +253,7 @@ const Transactions = () => {
 
                   <div className="mb-6">
                     <select
-                      onChange={(e)=>{
+                      onChange={(e) => {
                         console.log(e.target.value);
                         setCategoryID(e.target.value)
                       }}

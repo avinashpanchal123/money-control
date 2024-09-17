@@ -1,6 +1,9 @@
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { memo } from 'react';
 
-const TransactionTable = ({ transactions, handleEdit, handleDelete }) => {
+const TransactionTable =({ transactions, handleEdit, handleDelete }) => {
+  console.log("I am called");
+  
   return (
     <table className="min-w-full bg-white border-collapse">
       <thead>
@@ -38,6 +41,6 @@ const TransactionTable = ({ transactions, handleEdit, handleDelete }) => {
       </tbody>
     </table>
   );
-};
+}
 
-export default TransactionTable;
+export default memo(TransactionTable);

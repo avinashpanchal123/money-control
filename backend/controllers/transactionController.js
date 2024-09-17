@@ -30,7 +30,6 @@ const getAllTransactions = async (req, res) => {
             where: {
             }
         });
-        console.log(transactionList);
 
         res.status(200).json({
             success: true,
@@ -67,12 +66,18 @@ const addTransaction = async (req, res) => {
 
         const newTransaction = await Transaction.create({
             account_id: 1,
-            category_id: 1,
+            category_id: category_id,
             transaction_type: type,
             amount: amount
         })
         console.log(newTransaction, 'transaction_print');
-        return res.status(200).json({ success: true, data: { ...newTransaction.dataValues, category: category.dataValues } });
+        let obj = {
+            id : newTransaction.dataValues.id,
+            amount : newTransaction.dataValues.amount,
+            transaction_type: newTransaction.dataValues.transaction_type,
+            description : newTransaction.dataValues.description
+        }
+        return res.status(200).json({ success: true, data: { ...obj, category: category.dataValues } });
     } catch (err) {
         console.error('Error adding Transaction:', err);
         res.status(500).json({ message: 'Error adding Transaction' });
@@ -113,11 +118,23 @@ const editTransaction = async (req, res) => {
     }
 }
 
-const deleteTransaction = async () => {
+const deleteTransaction = async (req, res) => {
     try {
-
+        const {id} = req.body;
+        const deleted = Transaction.destroy({
+            where: {
+                id: id
+            }
+        })
+        if(!!deleted){
+            res.status(200).json({message : "Transaction deleted Successfully"})
+        }
+        else{
+            res.status(404).json({ message: 'Transaction not found' });
+        }
     } catch (err) {
-
+        console.error('Error deleting category:', err);
+        res.status(500).json({ message: 'Error deleting Transaction' });
     }
 }
 
