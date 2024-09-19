@@ -1,4 +1,4 @@
-const Modal = ({ showModal, headingText, setValue, handleSave, clearValues, handleType, type, value , editID}) => {
+const Modal = ({ showModal, headingText, setCategoryform,categoryform, handleSave, clearValues}) => {
     return (
       <>
         {showModal && (
@@ -23,8 +23,15 @@ const Modal = ({ showModal, headingText, setValue, handleSave, clearValues, hand
                       <div className="flex items-center space-x-4 mb-4">
                         <div className="flex items-center">
                           <input
-                            onChange={handleType}
-                            checked={type.income}
+                            onChange={(e) => setCategoryform((prev)=>{
+                              return {
+                                 ...prev, categoryType : {
+                                      expense: !prev.categoryType.expense,
+                                      income: !prev.categoryType.income
+                                 }
+                               }
+                             })}
+                            checked={categoryform.categoryType.income}
                             type="checkbox"
                             name="income"
                             id="income"
@@ -34,8 +41,15 @@ const Modal = ({ showModal, headingText, setValue, handleSave, clearValues, hand
                         </div>
                         <div className="flex items-center">
                           <input
-                            onChange={handleType}
-                            checked={type.expense}
+                            onChange={(e) => setCategoryform((prev)=>{
+                              return {
+                                 ...prev, categoryType : {
+                                      expense: !prev.categoryType.expense,
+                                      income: !prev.categoryType.income
+                                 }
+                               }
+                             })}
+                            checked={categoryform.categoryType.expense}
                             type="checkbox"
                             name="expense"
                             id="expense"
@@ -48,8 +62,12 @@ const Modal = ({ showModal, headingText, setValue, handleSave, clearValues, hand
                       {/* Input for Category Name */}
                       <div className="mb-6">
                         <input
-                          value={value}
-                          onChange={(e) => setValue(e.target.value)}
+                          value={categoryform.categoryName}
+                          onChange={(e) => setCategoryform((prev)=>{
+                           return {
+                              ...prev, categoryName : e.target.value
+                            }
+                          })}
                           type="text"
                           placeholder="Category name"
                           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"

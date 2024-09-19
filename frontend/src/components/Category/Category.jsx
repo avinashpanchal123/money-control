@@ -8,61 +8,64 @@ import { editCategory, addCategory, deleteCategory, setCategories } from "../../
 
 
 const Category = () => {
-    const categories = useSelector(state => state.category.value); 
+    const categories = useSelector(state => state.category.value);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
     const isAddModal = location.pathname === '/category/add';
     const isEditModal = !!location.pathname.includes('/category/edit');
 
-    const [categoryType, setcategoryType] = useState({
-        income: false,
-        expense: false
-    });
-    const [categoryName, setCategoryName] = useState('');
-    // const [categories, setCategories] = useState([]);
+    const [categoryform, setCategoryform] = useState(
+        {
+            categoryName: '',
+            categoryType: {
+                income: false,
+                expense: false
+            },
+        }
+    )
     const [editID, setEditID] = useState(null)
 
     useEffect(() => {
-        
-      
-        let response = axios.get('http://localhost:3000/category',  {
+
+
+        let response = axios.get('http://localhost:3000/category', {
             withCredentials: true // Ensure cookies are sent with the request
-          });
-        response.then((params)=>{
-            console.log(params);
-            
-            let data = params.data.map((el)=> {
+        });
+        response.then((params) => {
+
+            let data = params.data.map((el) => {
                 let obj = {
                     id: el.id,
-                    name : el.category_name,
+                    name: el.category_name,
                     type: el.category_type
                 }
                 return obj;
             });
-            console.log(data);
-            
-             dispatch(setCategories(data))
-        }).catch((err)=>{
+
+            dispatch(setCategories(data))
+        }).catch((err) => {
             console.error('Error fetching categories:', err)
+            navigate('/')
         })
 
     }, [])
 
 
-    const addNewCategory = async() => {
+    const addNewCategory = async () => {
 
-        if (categoryName && (categoryType.income || categoryType.expense)) {
-            const newCategory = {
-                name: categoryName,
-                type: categoryType.income ? "income" : "expense",
-            };
+        if (categoryform.categoryName && (categoryform.categoryType.income || categoryform.categoryType.expense)) {
 
-            let response = axios.post('http://localhost:3000/category/add', newCategory);
+            let response = axios.post('http://localhost:3000/category/add', categoryform, {
+                withCredentials: true // Ensure cookies are sent with the request
+            });
             let params = await response;
             let data = params.data;
-           
             dispatch(addCategory(data));
+        }
+        else {
+            // handle this in modal itself  
+            alert("All Fields are mendatrory")
         }
 
     };
@@ -78,27 +81,14 @@ const Category = () => {
     }
 
 
-    const handleType = (event) => {
-        const { name } = event.target;
-        if (name == 'income') {
-            setcategoryType({
-                income: true,
-                expense: false
-            })
-        }
-        else {
-            setcategoryType({
-                income: false,
-                expense: true
-            })
-        }
-    }
 
     const clearValues = () => {
-        setCategoryName('');
-        setcategoryType({
-            income: false,
-            expense: false
+        setCategoryform({
+            categoryName: '',
+            categoryType: {
+                income: false,
+                expense: false
+            },
         })
         navigate('/category')
     }
@@ -106,34 +96,34 @@ const Category = () => {
     const handleEdit = (id) => {
         setEditID(id)
         let currCategory = categories.find((category) => id === category.id);
-        setCategoryName(currCategory.name);
-        setcategoryType({
-            income: currCategory.type == "income" ? true : false,
-            expense: currCategory.type == "expense" ? true : false
+        console.log(currCategory);
+        
+        setCategoryform({
+            categoryName: currCategory.name,
+            categoryType: {
+                income: currCategory.type == "income" ? true : false,
+                expense: currCategory.type == "expense" ? true : false
+            },
         })
         navigate(`category/edit/${id}`)
     };
 
     const saveEdited = async (id) => {
-        let category = {
-            id: id,
-            name: categoryName,
-            type: categoryType.income ? "income" : "expense",
-        };
-        const response = await axios.post(`http://localhost:3000/category/edit/`, category);
+       
+        const response = await axios.post(`http://localhost:3000/category/edit/`,{...categoryform, id: id},  {
+            withCredentials: true // Ensure cookies are sent with the request
+        });
         let params = await response;
         let data = params.data;
-        console.log(data);
-        
+
         dispatch(editCategory(data));
-        
-        // let modifiedCategoryList = categories.map((category)=> id === category.id ? modifiedCategory: category);
-        // dispatch(editCategory(category));
     }
 
-    const handleDelete = async(id) => {
+    const handleDelete = async (id) => {
         // let category = categories.find((category)=> category.id == id);
-        await axios.post('http://localhost:3000/category/delete', {id})
+        await axios.post('http://localhost:3000/category/delete', { id },  {
+            withCredentials: true // Ensure cookies are sent with the request
+        })
         dispatch(deleteCategory(id))
     };
 
@@ -191,12 +181,10 @@ const Category = () => {
             <Modal
                 showModal={(isAddModal || isEditModal)}
                 headingText={`${!!isAddModal ? "Add New Category" : "Edit Category"}`}
-                setValue={setCategoryName}
+                setCategoryform={setCategoryform}
+                categoryform={categoryform}
                 handleSave={handleSave}
                 clearValues={clearValues}
-                handleType={handleType}
-                type={categoryType}
-                value={categoryName}
                 editID={editID}
             />
 

@@ -42,7 +42,8 @@ const Transactions = () => {
 
         dispatch(setCategories(data))
       }).catch((err) => {
-        console.error('Error fetching categories:', err)
+        console.error('Error fetching categories:', err);
+        navigator('/')
       })
     }
 
@@ -56,7 +57,8 @@ const Transactions = () => {
 
         dispatch(setTransactions(data))
       } catch (err) {
-        console.log(err);
+        console.error('Error fetching transactions:', err);
+        navigator('/')
       }
 
     }

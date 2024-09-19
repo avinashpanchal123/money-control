@@ -19,13 +19,13 @@ const getAllCategories = async (req, res) => {
 
 const addCategory = async (req, res) => {
     try {
-        const { name, type } = req.body;
-
-        if (!name || !type) {
+        let { categoryName, categoryType } = req.body;
+        categoryType =  !!categoryType.income ? 'income' : 'expense'
+        if (!categoryName || !categoryType) {
             return res.status(400).json({ message: 'Name and type are required' });
         }
 
-        const newCategory = await Category.create({ user_id: 1, category_name: name, category_type: type });
+        const newCategory = await Category.create({ user_id: 1, category_name: categoryName, category_type: categoryType });
         res.status(201).json({
             id: newCategory.id,
             name : newCategory.category_name,
@@ -39,10 +39,10 @@ const addCategory = async (req, res) => {
 
 const updateCategory = async (req, res) => {
     try {
-        const {id, name, type } = req.body;  
-
+        let {id, categoryName, categoryType } = req.body;  
+        categoryType =  !!categoryType.income ? 'income' : 'expense'
         const [updated] = await Category.update(
-            { category_name: name, category_type: type },  
+            { category_name: categoryName, category_type: categoryType },  
             { where: { id } } 
         );
 
