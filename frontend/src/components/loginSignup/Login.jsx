@@ -2,9 +2,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { useDispatch, useSelector } from "react-redux";
+import {setAuthToken} from "../../features/authToken/authTokenSlice"
 
 const Login = () => {
+
+  const dispatch = useDispatch();
   const [loginForm, setLoginForm] = useState({
     email :"",
     password:""
@@ -26,9 +29,14 @@ const Login = () => {
            password: loginForm.password
          };
 
-         axios.post("http://localhost:5141/auth/login",payload).then((res)=>{
-          if(res?.data?.token){
+         axios.post("http://localhost:3000/auth/login",payload, {
+          withCredentials: true
+        }).then((res)=>{
+          console.log(res, 'res_print');
+          
+          if(!!res?.data?.success){
             alert("Login Sucess")
+            dispatch(setAuthToken(res.data.token));
             navigate("/")
           }else{
             alert("please check the credentials again")

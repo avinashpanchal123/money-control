@@ -7,13 +7,16 @@ const privateKey = process.env.JWT_PRIVATE_KEY;
 
 // Authenticate Token Middleware
 exports.authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader;
-  if (!token) return res.sendStatus(401);
+  console.log(req.headers);
+  let token;
+  if(!!req.headers.cookie)
+    token = req.headers.cookie.split("=")[1];
+
+  if (!token) return res.sendStatus(401); // Unauthorized if no token is found
 
   jwt.verify(token, privateKey, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
+    if (err) return res.sendStatus(403); // Forbidden if token is invalid
+    req.user = user; 
     next();
   });
 };
@@ -29,7 +32,12 @@ exports.login = async (req, res) => {
   if (!result) return res.send("Incorrect password");
 
   const token = jwt.sign({ username: user.username, email }, privateKey, { expiresIn: '1h' });
-  res.json({ token });
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Strict'
+  });
+  res.json({ success: true });
 };
 
 // Register Controller
@@ -49,14 +57,11 @@ exports.register = async (req, res) => {
       email,
       mobile_number: 1234567890
     });
-    res.json({ "msg": "Sigup Successful" });      
+    res.json({ "msg": "Sigup Successful" });
   } catch (error) {
-    res.json({"msg" :"Something Went Wrong Try Again"})
+    res.json({ "msg": "Something Went Wrong Try Again" })
   }
 
-  // const accessToken = jwt.sign({ username: newUser.username, email: newUser.email }, privateKey, { expiresIn: '15m' });
-  // res.json({ accessToken });
-  
 };
 
 // Protected Route

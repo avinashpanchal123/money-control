@@ -26,7 +26,9 @@ const Transactions = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
-      let response = axios.get('http://localhost:3000/category');
+      let response = axios.get('http://localhost:3000/category', {
+        withCredentials: true // Ensure cookies are sent with the request
+      });
       response.then((params) => {
         let data = params.data.map((el) => {
           let obj = {
@@ -46,7 +48,9 @@ const Transactions = () => {
 
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/transactions');
+        const response = await axios.get('http://localhost:3000/transactions', {
+          withCredentials: true // Ensure cookies are sent with the request
+        });
         const data = response.data.data;
         console.log(data);
 

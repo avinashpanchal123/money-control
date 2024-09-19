@@ -7,6 +7,7 @@ import Category from "./components/Category/Category.jsx";
 import Transactions from "./components/Transactions/Transactions.jsx";
 import Signup from "./components/loginSignup/Signup.jsx"
 import Login from "./components/loginSignup/Login.jsx"
+import Home from './components/Home/Analysis.jsx'
 import "./index.css";
 import store from "./app/store.js";
 import { Provider } from 'react-redux'
@@ -22,7 +23,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       {/* <Route path="" element={<Home />}></Route> */}
-      {/* <Route path="about" element={<About />}></Route> */}
+      <Route path="" element={<Home />}></Route>
       <Route path="analysis" element={<Analysis />} />
       <Route path="budget" element={<Budget />} />
       <Route path="category/*" element={<Category />} />

@@ -8,7 +8,7 @@ import { editCategory, addCategory, deleteCategory, setCategories } from "../../
 
 
 const Category = () => {
-    const categories = useSelector(state => state.category.value);
+    const categories = useSelector(state => state.category.value); 
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
@@ -24,8 +24,14 @@ const Category = () => {
     const [editID, setEditID] = useState(null)
 
     useEffect(() => {
-        let response = axios.get('http://localhost:3000/category');
+        
+      
+        let response = axios.get('http://localhost:3000/category',  {
+            withCredentials: true // Ensure cookies are sent with the request
+          });
         response.then((params)=>{
+            console.log(params);
+            
             let data = params.data.map((el)=> {
                 let obj = {
                     id: el.id,

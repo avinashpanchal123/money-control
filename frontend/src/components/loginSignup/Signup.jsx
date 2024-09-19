@@ -27,7 +27,7 @@ const Signup = () => {
         password: signupForm.password
       };
       console.log("payload",payload)
-      axios.post("http://localhost:5141/auth/register",payload).then((res)=>{
+      axios.post("http://localhost:3000/auth/register",payload).then((res)=>{
         console.log(res.data)
         if(res?.data?.msg == "Sigup Successful"){
           navigate("/login")

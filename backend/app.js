@@ -7,7 +7,7 @@ const app = express();
 const authRoutes = require('./routes/authRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const transactionRoutes = require('./routes/transactionRoutes')
-const cors = require("cors")
+const authenticateToken = require("./controllers/authController").authenticateToken
 
 // const io = new Server(server, {
 //   cors: {
@@ -18,17 +18,29 @@ const cors = require("cors")
 // });
 
 // const userRoutes = require('./routes/userRoutes');
-app.use(cors())
+const cors = require('cors');
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  methods: 'GET,POST,PUT,DELETE',
+  allowedHeaders: 'Content-Type,Authorization',
+  credentials: true
+};
 
+// app.use(cors(corsOptions));
+
+// app.use(express.urlencoded({ extended: true }));
+// app.use(express.json());
+
+
+app.use(cors(corsOptions));
+app.use(express.json())
 // Routes
 app.use('/auth', authRoutes);
 //app.use('/users', userRoutes); // Example user route
 
-app.use('/category', categoryRoutes);
-app.use('/transactions', transactionRoutes);
+app.use('/category',authenticateToken, categoryRoutes);
+app.use('/transactions',authenticateToken, transactionRoutes);
 
 
 // app.get('/', (req, res) => {
