@@ -1,4 +1,4 @@
-const Modal = ({ showModal, headingText, setCategoryform,categoryform, handleSave, clearValues}) => {
+const Modal = ({ showModal, headingText, setCategoryform,categoryform, handleSave, clearValues, handleChange}) => {
     return (
       <>
         {showModal && (
@@ -23,14 +23,7 @@ const Modal = ({ showModal, headingText, setCategoryform,categoryform, handleSav
                       <div className="flex items-center space-x-4 mb-4">
                         <div className="flex items-center">
                           <input
-                            onChange={(e) => setCategoryform((prev)=>{
-                              return {
-                                 ...prev, categoryType : {
-                                      expense: false,
-                                      income: !prev.categoryType.income
-                                 }
-                               }
-                             })}
+                            onChange={handleChange}
                             checked={categoryform.categoryType.income}
                             type="checkbox"
                             name="income"
@@ -41,14 +34,7 @@ const Modal = ({ showModal, headingText, setCategoryform,categoryform, handleSav
                         </div>
                         <div className="flex items-center">
                           <input
-                            onChange={(e) => setCategoryform((prev)=>{
-                              return {
-                                 ...prev, categoryType : {
-                                      expense: !prev.categoryType.expense,
-                                      income: false
-                                 }
-                               }
-                             })}
+                            onChange={handleChange}
                             checked={categoryform.categoryType.expense}
                             type="checkbox"
                             name="expense"
@@ -63,12 +49,9 @@ const Modal = ({ showModal, headingText, setCategoryform,categoryform, handleSav
                       <div className="mb-6">
                         <input
                           value={categoryform.categoryName}
-                          onChange={(e) => setCategoryform((prev)=>{
-                           return {
-                              ...prev, categoryName : e.target.value
-                            }
-                          })}
+                          onChange={handleChange}
                           type="text"
+                          name="categoryName"
                           placeholder="Category name"
                           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />

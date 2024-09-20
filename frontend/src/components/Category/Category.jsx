@@ -15,7 +15,7 @@ const Category = () => {
     const isAddModal = location.pathname === '/category/add';
     const isEditModal = !!location.pathname.includes('/category/edit');
 
-    const [categoryform, setCategoryform] = useState(
+    const [categoryForm, setCategoryForm] = useState(
         {
             categoryName: '',
             categoryType: {
@@ -54,9 +54,9 @@ const Category = () => {
 
     const addNewCategory = async () => {
 
-        if (categoryform.categoryName && (categoryform.categoryType.income || categoryform.categoryType.expense)) {
+        if (categoryForm.categoryName && (categoryForm.categoryType.income || categoryForm.categoryType.expense)) {
 
-            let response = axios.post('http://localhost:3000/category/add', categoryform, {
+            let response = axios.post('http://localhost:3000/category/add', categoryForm, {
                 withCredentials: true // Ensure cookies are sent with the request
             });
             let params = await response;
@@ -83,7 +83,7 @@ const Category = () => {
 
 
     const clearValues = () => {
-        setCategoryform({
+        setCategoryForm({
             categoryName: '',
             categoryType: {
                 income: false,
@@ -98,7 +98,7 @@ const Category = () => {
         let currCategory = categories.find((category) => id === category.id);
         console.log(currCategory);
         
-        setCategoryform({
+        setCategoryForm({
             categoryName: currCategory.name,
             categoryType: {
                 income: currCategory.type == "income" ? true : false,
@@ -110,7 +110,7 @@ const Category = () => {
 
     const saveEdited = async (id) => {
        
-        const response = await axios.post(`http://localhost:3000/category/edit/`,{...categoryform, id: id},  {
+        const response = await axios.post(`http://localhost:3000/category/edit/`,{...categoryForm, id: id},  {
             withCredentials: true // Ensure cookies are sent with the request
         });
         let params = await response;
@@ -126,6 +126,27 @@ const Category = () => {
         })
         dispatch(deleteCategory(id))
     };
+
+    const handleChange = (e)=>{
+        const {name, type, value, checked} = e.target;
+        
+        if(type == 'checkbox'){
+          setCategoryForm((prevForm) => ({
+            ...prevForm,
+            categoryType: {
+              income : name == "income" ? true : false,
+              expense : name == "expense" ? true : false
+            }
+          }));
+        }
+        else {
+    
+          setCategoryForm((prevForm) => ({
+            ...prevForm,
+            [name]: type === 'number' ? value : value
+          }));
+        }
+      }
 
     return <>
         {/* Outer container with dark grey background */}
@@ -181,11 +202,11 @@ const Category = () => {
             <Modal
                 showModal={(isAddModal || isEditModal)}
                 headingText={`${!!isAddModal ? "Add New Category" : "Edit Category"}`}
-                setCategoryform={setCategoryform}
-                categoryform={categoryform}
+                setCategoryform={setCategoryForm}
+                categoryform={categoryForm}
                 handleSave={handleSave}
                 clearValues={clearValues}
-                editID={editID}
+                handleChange= {handleChange}
             />
 
         }
