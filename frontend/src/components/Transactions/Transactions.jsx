@@ -6,22 +6,28 @@ import axios from "axios";
 import { setTransactions, addTransaction, editTransaction, deleteTransaction } from "../../features/transaction/transactionSlice";
 import TransactionTable from './TransactionTable'
 import { editCategory, addCategory, deleteCategory, setCategories } from "../../features/category/categorySlice";
-import TransactionFilter from './TransactionFilter'
+import TransactionFilter from './TransactionFilter';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Transactions = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const [count , setCount] = useState(0)
   const transactions = useSelector(state => state.transaction.value);
   const categories = useSelector(state => state.category.value);
-  const [categoryID, setCategoryID] = useState('');
   const [filterCategoryID, setFilterCategoryID] = useState('')
 
-  const [transactionType, setTransactionType] = useState({
-    income: false,
-    expense: false
-  });
-  const [transactionAmount, setTransactionAmount] = useState(0);
+  const [transactinoform, setTransactionForm] = useState(
+    {
+      categoryID: '',
+      amount: '',
+      transactionType: {
+        income: false,
+        expense: false
+      },
+      description: ''
+    }
+  )
   const [editID, setEditID] = useState(null);
 
   useEffect(() => {
@@ -38,12 +44,11 @@ const Transactions = () => {
           }
           return obj;
         });
-        console.log(data);
 
         dispatch(setCategories(data))
       }).catch((err) => {
         console.error('Error fetching categories:', err);
-        navigator('/')
+        navigate('/login')
       })
     }
 
@@ -53,12 +58,11 @@ const Transactions = () => {
           withCredentials: true // Ensure cookies are sent with the request
         });
         const data = response.data.data;
-        console.log(data);
 
         dispatch(setTransactions(data))
       } catch (err) {
         console.error('Error fetching transactions:', err);
-        navigator('/')
+        navigate('/login')
       }
 
     }
@@ -68,6 +72,7 @@ const Transactions = () => {
         await Promise.all([fetchCategories(), fetchTransactions()])
       } catch (err) {
         console.error(err);
+        navigate('/login')
       }
     }
     fetchAllData()
@@ -76,24 +81,49 @@ const Transactions = () => {
 
   const addNewTransaction = async () => {
     try {
-      if (!!transactionAmount && (transactionType.income || transactionType.expense)) {
-        let newTransaction = {
-          amount: transactionAmount,
-          category_id: categoryID,
-          type: transactionType.income ? "income" : "expense",
-
-        }
-        let response = await axios.post('http://localhost:3000/transactions/add', newTransaction);
+    
+      if (!!transactinoform.amount && (transactinoform.transactionType.income || transactinoform.transactionType.expense)) {
+        let response = await axios.post('http://localhost:3000/transactions/add', transactinoform, {
+          withCredentials: true // Ensure cookies are sent with the request
+        });
         let data = response.data.data;
         console.log(data);
-
-        dispatch(addTransaction(response.data.data))
+        
+        data = {...data,
+           transactionType : {
+            income : data.transactionType == "income" ? true : false,
+            expense : data.transactionType == "expense" ? true : false
+           }
+        }
+        console.log(data, 'after');
+        dispatch(addTransaction(data))
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
 
     }
   };
+
+  const handleChange = (e)=>{
+    const {name, type, value, checked} = e.target;
+  
+    if(type == 'checkbox'){
+      setTransactionForm((prevForm) => ({
+        ...prevForm,
+        transactionType: {
+          income : name == "income" ? true : false,
+          expense : name == "expense" ? true : false
+        }
+      }));
+    }
+    else {
+
+      setTransactionForm((prevForm) => ({
+        ...prevForm,
+        [name]: type === 'number' ? value : value
+      }));
+    }
+  }
 
   const handleSave = (e) => {
     e.preventDefault()
@@ -107,54 +137,49 @@ const Transactions = () => {
   const saveEdited = (id) => {
     let tran = {
       id: id,
-      amount: transactionAmount,
-      type: transactionType.income ? "income" : "expense",
-    };
+      amount : transactinoform.amount,
+      type : !!transactinoform.transactionType.income ? "income" : "expense",
+      description : transactinoform.description
+    }
     dispatch(editTransaction(tran));
   }
 
 
-  const handleType = (event) => {
-    const { name } = event.target;
-    if (name == 'income') {
-      setTransactionType({
-        income: true,
-        expense: false
-      })
-    }
-    else {
-      setTransactionType({
-        income: false,
-        expense: true
-      })
-    }
-  }
 
   const handleEdit = useCallback((id) => {
 
     setEditID(id)
     let currTransaction = transactions.find((transaction) => id === transaction.id);
-    console.log(currTransaction);
-    setTransactionAmount(currTransaction.amount);
-    setTransactionType({
-      income: currTransaction.type == "income" ? true : false,
-      expense: currTransaction.type == "expense" ? true : false
+    setTransactionForm({
+      categoryID: currTransaction.id,
+      amount: currTransaction.amount,
+      categoryType: {
+        income: currTransaction.type == "income" ? true : false,
+        expense: currTransaction.type == "expense" ? true : false
+      },
+      description: currTransaction.description
     })
     setShowModal(true);
   }, [])
 
 
   const clearValues = () => {
-    setTransactionAmount('');
-    setTransactionType({
-      income: false,
-      expense: false
+    setTransactionForm({
+      categoryID: '',
+      amount: '',
+      transactionType: {
+        income: false,
+        expense: false
+      },
+      description: ''
     })
     setShowModal(false)
   }
 
-  const handleDelete = useCallback(async(id) => {
-    await axios.post('http://localhost:3000/transactions/delete', {id})
+  const handleDelete = useCallback(async (id) => {
+    await axios.post('http://localhost:3000/transactions/delete', { id }, {
+      withCredentials: true // Ensure cookies are sent with the request
+    })
     dispatch(deleteTransaction(id))
   }, [transactions])
 
@@ -163,15 +188,12 @@ const Transactions = () => {
   }
 
   const filteredTransactions = useMemo(() => {
-    
+
     if (!!filterCategoryID)
       return transactions.filter((tran) => tran.category.id == filterCategoryID)
     return transactions
   }, [filterCategoryID, transactions])
 
-  const handleClick = ()=>{
-    setCount(count+1)
-  }
 
   return <>
     {/* Outer container with dark grey background */}
@@ -190,8 +212,6 @@ const Transactions = () => {
         <div className="mb-4">
           <h1 className="text-xl font-bold text-center mb-4">Transactions</h1>
           <div className="w-2/4 mt-10">
-          < button onClick={handleClick}>click me</button>
-          <div>{count}</div>
             <TransactionFilter
               categories={categories}
               filterCategoryID={filterCategoryID}
@@ -235,8 +255,8 @@ const Transactions = () => {
                   <div className="flex items-center space-x-4 mb-4">
                     <div className="flex items-center">
                       <input
-                        onChange={handleType}
-                        checked={transactionType.income}
+                        onChange={handleChange}
+                        checked={transactinoform.transactionType.income}
                         type="checkbox"
                         name="income"
                         id="income"
@@ -246,8 +266,8 @@ const Transactions = () => {
                     </div>
                     <div className="flex items-center">
                       <input
-                        onChange={handleType}
-                        checked={transactionType.expense}
+                        onChange={handleChange}
+                        checked={transactinoform.transactionType.expense}
                         type="checkbox"
                         name="expense"
                         id="expense"
@@ -259,10 +279,8 @@ const Transactions = () => {
 
                   <div className="mb-6">
                     <select
-                      onChange={(e) => {
-                        console.log(e.target.value);
-                        setCategoryID(e.target.value)
-                      }}
+                      onChange={handleChange}
+                      name="categoryID"
                       className="w-full p-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option>Select Option...</option>
@@ -278,9 +296,10 @@ const Transactions = () => {
                   {/* Input for Transaction Amount */}
                   <div className="mb-6">
                     <input
-                      value={transactionAmount}
-                      onChange={(e) => setTransactionAmount(e.target.value)}
-                      type="number"
+                      value={transactinoform.amount}
+                      onChange={handleChange}
+                      type="text"
+                      name="amount"
                       placeholder="Transaction Amount"
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
@@ -293,6 +312,7 @@ const Transactions = () => {
                     <textarea
                       id="description"
                       name="description"
+                      onChange={handleChange} 
                       rows="3"
                       className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter a brief description of the transaction..."

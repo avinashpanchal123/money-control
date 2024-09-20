@@ -26,7 +26,7 @@ const Modal = ({ showModal, headingText, setCategoryform,categoryform, handleSav
                             onChange={(e) => setCategoryform((prev)=>{
                               return {
                                  ...prev, categoryType : {
-                                      expense: !prev.categoryType.expense,
+                                      expense: false,
                                       income: !prev.categoryType.income
                                  }
                                }
@@ -45,7 +45,7 @@ const Modal = ({ showModal, headingText, setCategoryform,categoryform, handleSav
                               return {
                                  ...prev, categoryType : {
                                       expense: !prev.categoryType.expense,
-                                      income: !prev.categoryType.income
+                                      income: false
                                  }
                                }
                              })}

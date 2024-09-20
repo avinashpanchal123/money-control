@@ -37,7 +37,7 @@ const getAllTransactions = async (req, res) => {
                 let obj = {
                     id : tran.dataValues.id,
                     amount : tran.dataValues.amount,
-                    transaction_type: tran.dataValues.transaction_type,
+                    transactionType: tran.dataValues.transaction_type,
                     description : tran.dataValues.description
                 }
                 return { ...obj, category: allCategories[tran.category_id] }
@@ -52,11 +52,11 @@ const getAllTransactions = async (req, res) => {
 const addTransaction = async (req, res) => {
 
     try {
-        const { type, amount, category_id } = req.body;
-
+        let { transactionType, amount, categoryID, description } = req.body;
+        transactionType = !!transactionType.income ? "income" : "expense";
         const category = await Category.findOne({
             where: {
-                id: category_id
+                id: +categoryID
             }
         })
 
@@ -66,15 +66,16 @@ const addTransaction = async (req, res) => {
 
         const newTransaction = await Transaction.create({
             account_id: 1,
-            category_id: category_id,
-            transaction_type: type,
-            amount: amount
+            category_id: +categoryID,
+            description: description,
+            transaction_type: transactionType,
+            amount: +amount
         })
         console.log(newTransaction, 'transaction_print');
         let obj = {
             id : newTransaction.dataValues.id,
             amount : newTransaction.dataValues.amount,
-            transaction_type: newTransaction.dataValues.transaction_type,
+            transactionType: newTransaction.dataValues.transaction_type,
             description : newTransaction.dataValues.description
         }
         return res.status(200).json({ success: true, data: { ...obj, category: category.dataValues } });

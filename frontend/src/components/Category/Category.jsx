@@ -46,7 +46,7 @@ const Category = () => {
             dispatch(setCategories(data))
         }).catch((err) => {
             console.error('Error fetching categories:', err)
-            navigate('/')
+            navigate('/login')
         })
 
     }, [])
