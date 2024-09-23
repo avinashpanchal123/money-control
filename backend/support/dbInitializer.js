@@ -38,14 +38,14 @@ function generateCreateTableSQL(tableName, schema) {
     const columns = [];
 
     for (const [key, attributes] of Object.entries(schema.tableAttributes)) {
-       
-            let column = `\`${key}\` ${(mapSequelizeToSQL(attributes.type.key, attributes.type.options))}`;
-            (key =='createdAt'  || key == 'updatedAt') ? " NUll" : (attributes.allowNull === false) ? column += ' NOT NULL': " ";
-            if (attributes.primaryKey) column += ' PRIMARY KEY';
-            if (attributes.autoIncrement) column += ' AUTO_INCREMENT';
-            if (attributes.unique) column += ' UNIQUE';
-            columns.push(column);
-        
+
+        let column = `\`${key}\` ${(mapSequelizeToSQL(attributes.type.key, attributes.type.options))}`;
+        (key == 'createdAt' || key == 'updatedAt') ? " NUll" : (attributes.allowNull === false) ? column += ' NOT NULL' : " ";
+        if (attributes.primaryKey) column += ' PRIMARY KEY';
+        if (attributes.autoIncrement) column += ' AUTO_INCREMENT';
+        if (attributes.unique) column += ' UNIQUE';
+        columns.push(column);
+
     }
 
     for (const [fieldName, fieldOptions] of Object.entries(schema.tableAttributes)) {
@@ -66,8 +66,8 @@ function syncSchema(dbConnector, dbName, tableName, modelsList, callback) {
         const query = `
         SELECT COUNT(*) AS table_exists 
         FROM INFORMATION_SCHEMA.TABLES 
-        WHERE TABLE_SCHEMA = "${dbName}" 
-        AND TABLE_NAME = "${tableName}";
+        WHERE TABLE_SCHEMA = '${dbName}' 
+        AND TABLE_NAME = '${tableName}';
       `;
         dbConnector.query(query, {
             replacements: { dbName, tableName },
