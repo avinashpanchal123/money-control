@@ -22,7 +22,8 @@ const authenticateToken = require("./controllers/authController").authenticateTo
 const cors = require('cors');
 
 const corsOptions = {
-  origin: process.env.FRONTEND_BASE_URL || 'http://localhost:5174',
+  // origin: process.env.FRONTEND_BASE_URL || 'http://localhost:5174',  
+  origin : 'https://money-control-kohl.vercel.app',
   methods: 'GET,POST,PUT,DELETE',
   allowedHeaders: 'Content-Type,Authorization',
   credentials: true
