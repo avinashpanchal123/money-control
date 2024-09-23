@@ -8,6 +8,7 @@ import { editCategory, addCategory, deleteCategory, setCategories } from "../../
 
 
 const Category = () => {
+    const backendBaseUrl = process.env.REACT_APP_BACKEND_URL;
     const categories = useSelector(state => state.category.value);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -27,9 +28,11 @@ const Category = () => {
     const [editID, setEditID] = useState(null)
 
     useEffect(() => {
+        // let response = axios.get('http://localhost:3000/category', {
+        //     withCredentials: true // Ensure cookies are sent with the request
+        // });
 
-
-        let response = axios.get('http://localhost:3000/category', {
+        let response = axios.get(`${backendBaseUrl}/category`, {
             withCredentials: true // Ensure cookies are sent with the request
         });
         response.then((params) => {
@@ -56,7 +59,7 @@ const Category = () => {
 
         if (categoryForm.categoryName && (categoryForm.categoryType.income || categoryForm.categoryType.expense)) {
 
-            let response = axios.post('http://localhost:3000/category/add', categoryForm, {
+            let response = axios.post(`${backendBaseUrl}/category/add`, categoryForm, {
                 withCredentials: true // Ensure cookies are sent with the request
             });
             let params = await response;
@@ -110,7 +113,7 @@ const Category = () => {
 
     const saveEdited = async (id) => {
        
-        const response = await axios.post(`http://localhost:3000/category/edit/`,{...categoryForm, id: id},  {
+        const response = await axios.post(`${backendBaseUrl}/category/edit/`,{...categoryForm, id: id},  {
             withCredentials: true // Ensure cookies are sent with the request
         });
         let params = await response;
@@ -121,7 +124,7 @@ const Category = () => {
 
     const handleDelete = async (id) => {
         // let category = categories.find((category)=> category.id == id);
-        await axios.post('http://localhost:3000/category/delete', { id },  {
+        await axios.post(`${backendBaseUrl}/category/delete`, { id },  {
             withCredentials: true // Ensure cookies are sent with the request
         })
         dispatch(deleteCategory(id))

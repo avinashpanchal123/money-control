@@ -6,7 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {setAuthToken} from "../../features/authToken/authTokenSlice"
 
 const Login = () => {
-
+  const backendBaseUrl = process.env.REACT_APP_BACKEND_URL;
+    
   const dispatch = useDispatch();
   const [loginForm, setLoginForm] = useState({
     email :"",
@@ -28,8 +29,8 @@ const Login = () => {
            email: loginForm.email,
            password: loginForm.password
          };
-
-         axios.post("http://localhost:3000/auth/login",payload, {
+         // axios.post("http://localhost:3000/auth/login",payload, {
+         axios.post(`${backendBaseUrl}/auth/login`,payload, {
           withCredentials: true
         }).then((res)=>{
           console.log(res, 'res_print');
@@ -49,7 +50,8 @@ const Login = () => {
    
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    // <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="min-h-screen text-white flex items-center justify-center bg-gray-800">
       <div className="w-full max-w-md bg-white p-8 border border-gray-300 rounded-lg shadow-md">
         <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
         <form onSubmit={handleLogin}>

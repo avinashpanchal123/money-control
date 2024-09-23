@@ -20,6 +20,7 @@ const Signup = () => {
 
 
   const handleSignup = (e) => {
+    const backendBaseUrl = process.env.REACT_APP_BACKEND_URL;
     e.preventDefault();
     const payload = {
         username:signupForm.username,
@@ -27,7 +28,8 @@ const Signup = () => {
         password: signupForm.password
       };
       console.log("payload",payload)
-      axios.post("http://localhost:3000/auth/register",payload).then((res)=>{
+      // axios.post("http://localhost:3000/auth/register",payload).then((res)=>{
+      axios.post(`${backendBaseUrl}/auth/register` ,payload).then((res)=>{
         console.log(res.data)
         if(res?.data?.msg == "Sigup Successful"){
           navigate("/login")
@@ -40,7 +42,7 @@ const Signup = () => {
      };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="min-h-screen text-white flex items-center justify-center bg-gray-800">
       <div className="w-full max-w-md bg-white p-8 border border-gray-300 rounded-lg shadow-md">
         <h2 className="text-2xl font-semibold text-center mb-6">Sign Up</h2>
         <form onSubmit={handleSignup}>

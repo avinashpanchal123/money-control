@@ -9,7 +9,9 @@ import { editCategory, addCategory, deleteCategory, setCategories } from "../../
 import TransactionFilter from './TransactionFilter';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+
 const Transactions = () => {
+  const backendBaseUrl = process.env.REACT_APP_BACKEND_URL;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
@@ -29,10 +31,16 @@ const Transactions = () => {
     }
   )
   const [editID, setEditID] = useState(null);
-
+  console.log(backendBaseUrl);
+  
   useEffect(() => {
     const fetchCategories = async () => {
-      let response = axios.get('http://localhost:3000/category', {
+      // let response = axios.get('http://localhost:3000/category', {
+      //   withCredentials: true // Ensure cookies are sent with the request
+      // });
+
+      let response = axios.get(`${backendBaseUrl}/category`, {
+        //let response = axios.get('http://localhost:3000/category
         withCredentials: true // Ensure cookies are sent with the request
       });
       response.then((params) => {
@@ -54,7 +62,11 @@ const Transactions = () => {
 
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/transactions', {
+        // const response = await axios.get('http://localhost:3000/transactions', {
+        //   withCredentials: true // Ensure cookies are sent with the request
+        // });
+
+        const response = await axios.get(`${backendBaseUrl}/transactions`, {
           withCredentials: true // Ensure cookies are sent with the request
         });
         const data = response.data.data;
@@ -83,7 +95,11 @@ const Transactions = () => {
     try {
     
       if (!!transactinoform.amount && (transactinoform.transactionType.income || transactinoform.transactionType.expense)) {
-        let response = await axios.post('http://localhost:3000/transactions/add', transactinoform, {
+        // let response = await axios.post('http://localhost:3000/transactions/add', transactinoform, {
+        //   withCredentials: true // Ensure cookies are sent with the request
+        // });
+
+        let response = await axios.post(`${backendBaseUrl}/transactions/add`, transactinoform, {
           withCredentials: true // Ensure cookies are sent with the request
         });
         let data = response.data.data;
@@ -177,7 +193,11 @@ const Transactions = () => {
   }
 
   const handleDelete = useCallback(async (id) => {
-    await axios.post('http://localhost:3000/transactions/delete', { id }, {
+    // await axios.post('http://localhost:3000/transactions/delete', { id }, {
+    //   withCredentials: true // Ensure cookies are sent with the request
+    // })
+
+    await axios.post(`${backendBaseUrl}/transactions/delete`, { id }, {
       withCredentials: true // Ensure cookies are sent with the request
     })
     dispatch(deleteTransaction(id))

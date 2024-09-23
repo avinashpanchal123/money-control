@@ -7,10 +7,13 @@ import ThisMonthAnalysis from "./ThisMonthAnalalysis";
 
 
 const Apexcharts = () => {
+    const backendBaseUrl = process.env.REACT_APP_BACKEND_URL;
     useEffect(() => {
         async function getAnalysis(params) {
            try{
-            let res =  await axios.get('http://localhost:3000/analysis', {
+            // let res =  await axios.get('http://localhost:3000/analysis', {
+           
+            let res =  await axios.get(`${backendBaseUrl}/analysis`, {
                 withCredentials : true
             });
            }catch(err){
