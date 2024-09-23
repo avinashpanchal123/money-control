@@ -83,7 +83,7 @@ DB_NAME=money_control</code></pre>
     <h3>4. File Upload</h3>
     <p>Upload bank transaction files in CSV format to update your transactions.</p>
     <h2>📸 Screenshots</h2>
-    <table>
+<!--     <table>
         <tr>
             <th>Dashboard</th>
             <th>Add Transaction</th>
@@ -112,6 +112,6 @@ DB_NAME=money_control</code></pre>
         <li>Open a pull request.</li>
     </ol>
     <h2>📝 License</h2>
-    <p>This project is licensed under the MIT License - see the <a href="LICENSE">LICENSE</a> file for details.</p>
+    <p>This project is licensed under the MIT License - see the <a href="LICENSE">LICENSE</a> file for details.</p> -->
 </body>
 </html>
