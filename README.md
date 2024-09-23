@@ -82,7 +82,7 @@ DB_NAME=money_control</code></pre>
     </ul>
     <h3>4. File Upload</h3>
     <p>Upload bank transaction files in CSV format to update your transactions.</p>
-    <h2>📸 Screenshots</h2>
+<!--     <h2>📸 Screenshots</h2> -->
 <!--     <table>
         <tr>
             <th>Dashboard</th>
