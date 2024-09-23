@@ -7,7 +7,7 @@ import ThisMonthAnalysis from "./ThisMonthAnalalysis";
 
 
 const Apexcharts = () => {
-    const backendBaseUrl = process.env.REACT_APP_BACKEND_URL;
+    const backendBaseUrl = 'https://money-control-1xjr.onrender.com/';
     useEffect(() => {
         async function getAnalysis(params) {
            try{

@@ -8,7 +8,7 @@ import { editCategory, addCategory, deleteCategory, setCategories } from "../../
 
 
 const Category = () => {
-    const backendBaseUrl = process.env.REACT_APP_BACKEND_URL;
+    const backendBaseUrl = 'https://money-control-1xjr.onrender.com/';
     const categories = useSelector(state => state.category.value);
     const dispatch = useDispatch();
     const navigate = useNavigate();
