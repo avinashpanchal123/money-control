@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {setAuthToken} from "../../features/authToken/authTokenSlice"
 
 const Login = () => {
-  const backendBaseUrl = "https://money-control-1xjr.onrender.com/";
+  const backendBaseUrl = "https://money-control-1xjr.onrender.com";
     
   const dispatch = useDispatch();
   const [loginForm, setLoginForm] = useState({

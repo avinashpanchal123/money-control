@@ -20,7 +20,7 @@ const Signup = () => {
 
 
   const handleSignup = (e) => {
-    const backendBaseUrl = "https://money-control-1xjr.onrender.com/";
+    const backendBaseUrl = "https://money-control-1xjr.onrender.com";
     e.preventDefault();
     const payload = {
         username:signupForm.username,

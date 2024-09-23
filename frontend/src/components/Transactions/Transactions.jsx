@@ -11,7 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 
 const Transactions = () => {
-  const backendBaseUrl = 'https://money-control-1xjr.onrender.com/';
+  const backendBaseUrl = 'https://money-control-1xjr.onrender.com';
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
