@@ -17,7 +17,7 @@ const Apexcharts = () => {
   
     return (
         <>
-            <div className="bg-black pt-20 text-white px-8 md:px-16 lg:px-24">
+            <div className="min-h-screen text-white flex items-center justify-center bg-gray-800">
                 <h1 className="text-xl font-bold mb-4 pl-20 text-left">Expense Overview</h1>
                 <div className="flex space-x-20">
                    <ThisMonthAnalysis/>

@@ -3,7 +3,7 @@ import { Link, Outlet } from 'react-router-dom';
 import axios from 'axios';
 
 const Navbar = () => {
-    const [userName, setUserName] = useState('Avinsh');
+    const [userName, setUserName] = useState('Avinash');
 
     useEffect(() => {
         // console.log('goasoo');
@@ -36,11 +36,11 @@ const Navbar = () => {
                         <li className='hover:text-gray-400'>
                             <Link to="/analysis">Analysis</Link>
                         </li>
-                        <li className='hover:text-gray-400'>
+                        {/* <li className='hover:text-gray-400'>
                             <Link to="/budget">Budget</Link>
-                        </li>
+                        </li> */}
                         <li className='hover:text-gray-400'>
-                            <Link to="/category">Category</Link>
+                            <Link to="/category">Categories</Link>
                         </li>
                         <li className='hover:text-gray-400'>
                             <Link to="/transactions">Transactions</Link>
@@ -55,14 +55,14 @@ const Navbar = () => {
                     {
                         !!userName &&
                         <div className='relative'>
-                            <div className='flex items-center cursor-pointer'>
+                            {/* <div className='flex items-center cursor-pointer'>
                                 <img
                                     src="https://via.placeholder.com/40"
                                     alt="User Avatar"
                                     className='w-10 h-10 rounded-full object-cover'
                                 />
                                 <span className='ml-2 hidden md:inline'>{userName}</span>
-                            </div>
+                            </div> */}
                             <div className='absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg hidden group-hover:block'>
                                 <ul>
                                     <li className='px-4 py-2 hover:bg-gray-200'>

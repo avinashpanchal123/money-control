@@ -3,6 +3,7 @@ import Apexchart from './ApexCharts'
 
 const SixMonthsAnalysis = () => {
     // const [category, setCategory] = useState([]);
+    const date = new Date();
     useEffect(() => {
 
     }, [])
