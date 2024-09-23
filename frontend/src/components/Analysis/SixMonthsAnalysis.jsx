@@ -9,7 +9,7 @@ const SixMonthsAnalysis = () => {
     }, [])
     const chartData = {
         series: [30, 40, 45, 100, 49, 60],
-        labels: ['jan', 'feb', 'mar', 'apr', 'may','jun'],
+        labels: ['apr', 'may', 'jun', 'jul', 'aug','sept'],
         type: "bar",
     };
     return <>
