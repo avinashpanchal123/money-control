@@ -6,7 +6,8 @@ const app = express();
 // const server = createServer(app)
 const authRoutes = require('./routes/authRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
-const transactionRoutes = require('./routes/transactionRoutes')
+const transactionRoutes = require('./routes/transactionRoutes');
+const analysisRoutes = require('./routes/analysisRoutes');
 const authenticateToken = require("./controllers/authController").authenticateToken
 
 // const io = new Server(server, {
@@ -41,7 +42,7 @@ app.use('/auth', authRoutes);
 
 app.use('/category',authenticateToken, categoryRoutes);
 app.use('/transactions',authenticateToken, transactionRoutes);
-
+app.use('/analysis', authenticateToken, analysisRoutes)
 
 // app.get('/', (req, res) => {
 //   res.send("Hello World!");
