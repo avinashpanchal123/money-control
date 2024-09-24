@@ -64,7 +64,7 @@ DB_NAME=money_control</code></pre>
     <h3>6. Access the App</h3>
     <p>Visit <a href="http://localhost:3000" target="_blank">http://localhost:3000</a> in your browser to start using the Money Control app.</p>
     <h2>📊 Features Overview</h2>
-    <h3>1. Dashboard</h3>
+    <h3>1. Analysis </h3>
     <ul>
         <li>Overview of income and expenses for the current month.</li>
         <li>Displays charts (pie and bar charts) representing category-wise expense analysis.</li>
@@ -81,36 +81,5 @@ DB_NAME=money_control</code></pre>
     </ul>
     <h3>4. File Upload</h3>
     <p>Upload bank transaction files in CSV format to update your transactions.</p>
-<!--     <h2>📸 Screenshots</h2> -->
-<!--     <table>
-        <tr>
-            <th>Dashboard</th>
-            <th>Add Transaction</th>
-            <th>Analysis Chart</th>
-        </tr>
-        <tr>
-            <td><img src="https://github.com/avinashpanchal123/money-control/screenshots/dashboard.png" alt="Dashboard" width="300"></td>
-            <td><img src="https://github.com/avinashpanchal123/money-control/screenshots/add-transaction.png" alt="Add Transaction" width="300"></td>
-            <td><img src="https://github.com/avinashpanchal123/money-control/screenshots/analysis-chart.png" alt="Analysis Chart" width="300"></td>
-        </tr>
-    </table>
-    <h2>🚧 Upcoming Features</h2>
-    <ul>
-        <li><strong>Recurring Transactions:</strong> Automatically add recurring income or expenses.</li>
-        <li><strong>Budgeting:</strong> Set budgets for different categories and track performance.</li>
-        <li><strong>Multi-Currency Support:</strong> Track transactions in multiple currencies.</li>
-        <li><strong>Cloud Sync:</strong> Sync data across devices using cloud storage.</li>
-    </ul>
-    <h2>👨‍💻 Contributing</h2>
-    <p>Contributions are welcome! Please follow these steps to contribute:</p>
-    <ol>
-        <li>Fork the repository.</li>
-        <li>Create a new branch: <code>git checkout -b feature-name</code>.</li>
-        <li>Make your changes and commit them: <code>git commit -m 'Add some feature'</code>.</li>
-        <li>Push to the branch: <code>git push origin feature-name</code>.</li>
-        <li>Open a pull request.</li>
-    </ol>
-    <h2>📝 License</h2>
-    <p>This project is licensed under the MIT License - see the <a href="LICENSE">LICENSE</a> file for details.</p> -->
 </body>
 </html>
